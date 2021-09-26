@@ -1,3 +1,4 @@
+import subprocess
 import os
 import requests
 from pathlib import Path
@@ -33,4 +34,11 @@ def main():
         open(images+name, "wb").write(res.content)
 
         print("setting...", name)
-        os.system(f"gsettings set org.gnome.desktop.background picture-uri {images+name}")
+        envi = os.environ["XDG_SESSION_DESKTOP"]
+        out = subprocess.check_output( "xrandr | grep ' connected ' | awk '{ print$1 }' " , shell=True)
+        mon = out.decode("utf-8").strip()
+
+        if envi == "gnome":
+            os.system(f"gsettings set org.gnome.desktop.background picture-uri {images+name}")
+        elif envi == "xfce" :
+            os.system(f"xfconf-query -c xfce4-desktop -p /backdrop/screen0/monitor{mon}/workspace0/last-image  -s {images+name}")
