@@ -5,22 +5,32 @@ require('dotenv').config()
 const axios = require('axios');
 const prompt = require('prompt-sync')();
 const process = require('process');
-
-const homedir = require('os').homedir();
-const fs = require('fs');
 const { exit } = require('process');
+
+// dirs
+const fs = require('fs');
+const homedir = require('os').homedir();
 const imgDir = homedir + "/termpaper";
 
+// unsplash
 const endpoint = (query) => `https://api.unsplash.com/photos/random?query=${query}&orientation=landscape&topics=wallpaper`
 let api_key = process.env.API_KEY;
 
+// make sure the folder exists
 const setupPersistance = () => {
     if (!fs.existsSync(imgDir)){
         console.log("creating a img directory at " + homedir + " ...");
         fs.mkdirSync(imgDir);
     }
+
+    // check if .env exists, if not , creates it
+    fs.open('.env', 'w', function (err, file) {
+        if (err) throw err;
+    });
 }
 
+
+// check if api_key exists in .env
 const checkKey = () => {
     if(api_key){
         return;
@@ -31,11 +41,17 @@ const checkKey = () => {
     fs.appendFile('.env', newData, 'utf8', () => {});
 }
 
+// downloads image
 const getImage = async (url, filepath) => {
     const response = await axios({
         url,
         method: 'GET',
         responseType: 'stream'
+    })
+    .catch(e => {
+        console.log("something went wrong while donwloading the image !");
+        console.log("check your internet connection , if problem persists, contact the dev on github");
+        exit(0);
     })
 
     return new Promise((resolve, reject) => {
@@ -49,6 +65,8 @@ const getImage = async (url, filepath) => {
     });
 }
 
+
+// get the link and call getImage()
 const download = async (args) => {
     for(let i = 0; i < args.length; i++){
         const arg = args[i];
