@@ -1,6 +1,6 @@
-require('dotenv').config()
+#!/usr/bin/env node
 
-// API_KEY = "Client-ID H_2-ZGR4A33wOsyCUWmHXNxhkl68Rz8zyINTaYeWj7M"
+require('dotenv').config()
 
 const axios = require('axios');
 const prompt = require('prompt-sync')();
@@ -24,9 +24,11 @@ const setupPersistance = () => {
     }
 
     // check if .env exists, if not , creates it
-    fs.open('.env', 'w', function (err, file) {
-        if (err) throw err;
-    });
+    fs.exists(".env", (exists) => {
+        if(!exists){
+            fs.closeSync(fs.openSync(".env", 'w'));
+        }
+    })
 }
 
 
@@ -77,11 +79,13 @@ const download = async (args) => {
             }
         })
         .catch(e => {
-            if(e.response.status == 401){
+            if(!e.response){
+                console.log("something went wrong, check you internet connection !");
+            }else if(e.response.status === 401){
                 console.log("invalid access token !");
                 fs.truncateSync(".env", 0, () => {})
             }else{
-                console.log("something went wrong, check you internet connection !");
+                console.log("i guess js sucks")
             }
             exit(0);
         })

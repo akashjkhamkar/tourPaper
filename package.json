@@ -1,5 +1,6 @@
 {
   "name": "termpaper",
+  "bin": "./index.js" ,
   "version": "1.0.0",
   "description": "command line tool for downloading wallpapers from unsplash",
   "main": "index.js",
