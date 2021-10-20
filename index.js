@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-require('dotenv').config()
 
 const axios = require('axios');
 const prompt = require('prompt-sync')();
@@ -11,6 +10,9 @@ const { exit } = require('process');
 const fs = require('fs');
 const homedir = require('os').homedir();
 const imgDir = homedir + "/termpaper";
+const env = imgDir + "/.env";
+
+require('dotenv').config({ path: env})
 
 // unsplash
 const endpoint = (query) => `https://api.unsplash.com/photos/random?query=${query}&orientation=landscape&topics=wallpaper`
@@ -24,9 +26,9 @@ const setupPersistance = () => {
     }
 
     // check if .env exists, if not , creates it
-    fs.exists(".env", (exists) => {
+    fs.exists(env, (exists) => {
         if(!exists){
-            fs.closeSync(fs.openSync(".env", 'w'));
+            fs.closeSync(fs.openSync(env, 'w'));
         }
     })
 }
@@ -40,7 +42,7 @@ const checkKey = () => {
     
     api_key = "Client-ID " + prompt('Enter the unsplash api key - ');
     const newData = '\n' + `API_KEY = ${api_key}`;
-    fs.appendFile('.env', newData, 'utf8', () => {});
+    fs.appendFile(env, newData, 'utf8', () => {});
 }
 
 // downloads image
