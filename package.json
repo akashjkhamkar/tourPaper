@@ -1,7 +1,7 @@
 {
-  "name": "termpaper",
-  "bin": "./index.js" ,
-  "version": "1.0.0",
+  "name": "tourpaper",
+  "bin": "./index.js",
+  "version": "1.0.4",
   "description": "command line tool for downloading wallpapers from unsplash",
   "main": "index.js",
   "scripts": {

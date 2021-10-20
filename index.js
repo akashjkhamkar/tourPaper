@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-
 const axios = require('axios');
 const prompt = require('prompt-sync')();
 const process = require('process');
@@ -9,7 +8,7 @@ const { exit } = require('process');
 // dirs
 const fs = require('fs');
 const homedir = require('os').homedir();
-const imgDir = homedir + "/termpaper";
+const imgDir = homedir + "/tourpaper";
 const env = imgDir + "/.env";
 
 require('dotenv').config({ path: env})
@@ -21,7 +20,7 @@ let api_key = process.env.API_KEY;
 // make sure the folder exists
 const setupPersistance = () => {
     if (!fs.existsSync(imgDir)){
-        console.log("creating a img directory at " + homedir + " ...");
+        console.log("creating an img directory at " + homedir + " ...");
         fs.mkdirSync(imgDir);
     }
 
@@ -43,6 +42,7 @@ const checkKey = () => {
     api_key = "Client-ID " + prompt('Enter the unsplash api key - ');
     const newData = '\n' + `API_KEY = ${api_key}`;
     fs.appendFile(env, newData, 'utf8', () => {});
+    console.log(`api key is stored in ${env}`);
 }
 
 // downloads image
@@ -85,7 +85,7 @@ const download = async (args) => {
                 console.log("something went wrong, check you internet connection !");
             }else if(e.response.status === 401){
                 console.log("invalid access token !");
-                fs.truncateSync(".env", 0, () => {})
+                fs.truncateSync(env, 0, () => {})
             }else{
                 console.log("i guess js sucks")
             }
@@ -100,10 +100,15 @@ const download = async (args) => {
 }
 
 const driver = async () => {
-    checkKey();
     setupPersistance();
+    checkKey();
     await download(process.argv.slice(2));
+    console.log("images downloaded at " + imgDir);
     exit(0);
 }
 
-driver();
+if(process.argv.length < 3){
+    console.log("usage : tourpaper [name1] [name2] ...");
+}else{
+    driver();
+}
