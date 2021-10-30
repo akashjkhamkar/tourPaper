@@ -87,7 +87,7 @@ const download = async (args) => {
                 console.log("invalid access token !");
                 fs.truncateSync(env, 0, () => {})
             }else{
-                console.log("i guess js sucks")
+                console.log("Not found !")
             }
             exit(0);
         })
